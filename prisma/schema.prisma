@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  //directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+}
+
+model Product {
+  id         String   @id @default(cuid())
+  sku        String?
+  no         String?
+  product    String
+  packsize   String?
+  barcode    String?
+  unitPrice  Float?
+  price      Float?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Client {
+  id         String            @id @default(cuid())
+  clientName String
+  phone      String            @default("")
+  routeName  String            @default("")
+  riderPrice Int               @default(0)
+  phamPrice  Int               @default(0)
+  createdAt  DateTime          @default(now())
+  diary      DiaryEntry[]
+  trips      TransportRecord[]
+}
+
+model TransportRecord {
+  id         String   @id @default(cuid())
+  clientId   String?
+  clientName String
+  riderName  String   @default("")
+  routeName  String   @default("")
+  riderPrice Int      @default(0)
+  phamPrice  Int      @default(0)
+  updatedAt  DateTime @updatedAt
+  client     Client?  @relation(fields: [clientId], references: [id])
+}
+
+model DiaryEntry {
+  id         String     @id @default(cuid())
+  clientId   String?
+  clientName String
+  date       String
+  itemsTaken String     @default("")
+  qty        Int        @default(0)
+  transport  Int        @default(0)
+  paidStatus PaidStatus @default(unpaid)
+  createdAt  DateTime   @default(now())
+  client     Client?    @relation(fields: [clientId], references: [id])
+}
+
+// Singleton row (id is always "backup") holding the backup switch and
+// destination choices — where a backup goes, and what it includes.
+model BackupSettings {
+  id                  String    @id @default("backup")
+  enabled             Boolean   @default(false) // daily scheduled run on/off
+  backupTime          String    @default("20:00") // 24h "HH:mm", server-local time
+  backupToGoogleDrive Boolean   @default(true)
+  backupToLocalFolder Boolean   @default(false)
+  localFolderPath     String? // e.g. C:\ManifestBackups — used when backupToLocalFolder is on
+  includeDatabaseDump Boolean   @default(false) // also run pg_dump into localFolderPath
+  lastRunAt           DateTime?
+  lastStatus          String? // "success" | "error"
+  lastError           String?
+  lastFileUrl         String? // Drive link, when backupToGoogleDrive produced one
+  lastLocalPath       String? // folder the last local backup was written to
+}
+
+enum Role {
+  admin
+  staff
+}
+
+enum PaidStatus {
+  paid
+  partial
+  unpaid
+}

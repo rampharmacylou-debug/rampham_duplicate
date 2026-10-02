@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+:root {
+  --canvas: #eceee5;
+  --surface: #f8f9f4;
+  --ink: #15262b;
+  --ink-soft: #1d343b;
+  --text: #1f2c2a;
+  --muted: #5d6b62;
+  --accent: #c97a2b;
+  --accent-soft: #e9c190;
+  --hairline: #d6d9cd;
+  --danger: #a8453b;
+  --success: #4f7a5b;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-hairline: var(--hairline);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --font-display: ui-sans-serif, "Helvetica Neue", Arial, sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono",
+    monospace;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--font-body);
+}
+
+/* Display role leans on weight + tight tracking rather than a distinct
+   typeface, so headings stay crisp without depending on a webfont fetch. */
+.font-display {
+  letter-spacing: -0.015em;
+}
+
+/* Pennant marker for the active sidebar tab */
+.pennant {
+  position: relative;
+}
+.pennant::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--accent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 60% 50%);
+}
+
+/* Subtle perforation rule used to echo a manifest page edge */
+.perforation {
+  background-image: radial-gradient(
+    circle,
+    var(--hairline) 1px,
+    transparent 1.2px
+  );
+  background-size: 10px 10px;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+}
